@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: sai-vandan-postgres
+    environment:
+      POSTGRES_DB: sai_vandan_crm
+      POSTGRES_USER: sai_vandan
+      POSTGRES_PASSWORD: sai_vandan_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sai_vandan -d sai_vandan_crm"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:
+

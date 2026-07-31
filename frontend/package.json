@@ -1,0 +1,9 @@
+{
+  "name": "sai-vandan-crm-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": { "dev": "node node_modules/vite/bin/vite.js", "build": "node node_modules/typescript/bin/tsc --noEmit && node node_modules/vite/bin/vite.js build" },
+  "dependencies": { "@vitejs/plugin-react": "latest", "vite": "latest", "typescript": "~5.8.3", "react": "latest", "react-dom": "latest", "lucide-react": "latest", "recharts": "latest" },
+  "devDependencies": { "@types/react": "latest", "@types/react-dom": "latest" }
+}

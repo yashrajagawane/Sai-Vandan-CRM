@@ -1,0 +1,38 @@
+CREATE TABLE projects (
+  id UUID DEFAULT RANDOM_UUID() PRIMARY KEY, code VARCHAR(30) UNIQUE NOT NULL, name VARCHAR(160) NOT NULL, city VARCHAR(100), status VARCHAR(30) NOT NULL DEFAULT 'ACTIVE'
+);
+CREATE TABLE units (
+  id UUID DEFAULT RANDOM_UUID() PRIMARY KEY, project_id UUID NOT NULL REFERENCES projects(id), wing VARCHAR(40), floor VARCHAR(20), unit_number VARCHAR(30) NOT NULL,
+  configuration VARCHAR(20), carpet_area DECIMAL(10,2), built_up_area DECIMAL(10,2), base_price DECIMAL(15,2), status VARCHAR(30) NOT NULL DEFAULT 'AVAILABLE', UNIQUE(project_id, unit_number)
+);
+CREATE TABLE site_visits (
+  id UUID DEFAULT RANDOM_UUID() PRIMARY KEY, lead_id UUID NOT NULL REFERENCES leads(id), visit_date DATE NOT NULL, visit_time VARCHAR(20), executive_id UUID REFERENCES users(id), status VARCHAR(30) NOT NULL,
+  pickup_required BOOLEAN NOT NULL DEFAULT FALSE, feedback VARCHAR(1000), created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE bookings (
+  id UUID DEFAULT RANDOM_UUID() PRIMARY KEY, booking_number VARCHAR(30) UNIQUE NOT NULL, lead_id UUID REFERENCES leads(id), unit_id UUID REFERENCES units(id),
+  booking_amount DECIMAL(15,2), booking_date DATE, status VARCHAR(30) NOT NULL DEFAULT 'PENDING', created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE customer_payments (
+  id UUID DEFAULT RANDOM_UUID() PRIMARY KEY, booking_id UUID NOT NULL REFERENCES bookings(id), receipt_number VARCHAR(30) UNIQUE NOT NULL, payment_type VARCHAR(40) NOT NULL,
+  amount DECIMAL(15,2) NOT NULL, payment_date DATE NOT NULL, due_date DATE, payment_mode VARCHAR(30), transaction_reference VARCHAR(100), status VARCHAR(30) NOT NULL DEFAULT 'PENDING', created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE employees (
+  id UUID DEFAULT RANDOM_UUID() PRIMARY KEY, employee_code VARCHAR(30) UNIQUE NOT NULL, user_id UUID REFERENCES users(id), department VARCHAR(100), designation VARCHAR(100), joining_date DATE,
+  basic_salary DECIMAL(15,2), active BOOLEAN NOT NULL DEFAULT TRUE, created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE vendors (
+  id UUID DEFAULT RANDOM_UUID() PRIMARY KEY, vendor_code VARCHAR(30) UNIQUE NOT NULL, vendor_name VARCHAR(160) NOT NULL, company_name VARCHAR(160), category VARCHAR(80), mobile VARCHAR(20), email VARCHAR(180), active BOOLEAN NOT NULL DEFAULT TRUE
+);
+CREATE TABLE vendor_bills (
+  id UUID DEFAULT RANDOM_UUID() PRIMARY KEY, vendor_id UUID NOT NULL REFERENCES vendors(id), invoice_number VARCHAR(80) NOT NULL, invoice_date DATE NOT NULL,
+  amount DECIMAL(15,2) NOT NULL, gst_amount DECIMAL(15,2) DEFAULT 0, due_date DATE, status VARCHAR(30) NOT NULL DEFAULT 'PENDING', UNIQUE(vendor_id, invoice_number)
+);
+CREATE TABLE petty_cash_entries (
+  id UUID DEFAULT RANDOM_UUID() PRIMARY KEY, voucher_number VARCHAR(30) UNIQUE NOT NULL, entry_date DATE NOT NULL, category VARCHAR(60) NOT NULL, description VARCHAR(500) NOT NULL,
+  amount DECIMAL(15,2) NOT NULL, payment_mode VARCHAR(30), requested_by UUID REFERENCES users(id), approved_by UUID REFERENCES users(id), status VARCHAR(30) NOT NULL DEFAULT 'DRAFT'
+);
+CREATE TABLE support_tickets (
+  id UUID DEFAULT RANDOM_UUID() PRIMARY KEY, ticket_number VARCHAR(30) UNIQUE NOT NULL, booking_id UUID REFERENCES bookings(id), category VARCHAR(50) NOT NULL, priority VARCHAR(20) NOT NULL DEFAULT 'MEDIUM',
+  status VARCHAR(30) NOT NULL DEFAULT 'OPEN', subject VARCHAR(180) NOT NULL, description VARCHAR(1000), assigned_to UUID REFERENCES users(id), due_at TIMESTAMP WITH TIME ZONE
+);
