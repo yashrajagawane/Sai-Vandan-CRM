@@ -151,8 +151,13 @@ main{height:100vh;min-height:0;overflow-y:auto;overflow-x:hidden}
 .login-form h2{margin:0 0 8px}
 .login-form .muted{margin:0 0 6px;line-height:1.5}
 .login-form label{margin:10px 0}
+.password-field{position:relative;display:block}
+.password-field input{width:100%;padding-right:48px}
+.password-toggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:34px;height:34px;padding:0;border:0;border-radius:8px;background:transparent;color:var(--exec-muted);cursor:pointer}
+.password-toggle:hover{background:#F4EDE4;color:var(--exec-primary)}
+.password-toggle:focus-visible{outline:2px solid var(--exec-primary);outline-offset:2px}
 .login-form input{padding:12px 14px}
-.login-form .primary.full{min-height:46px;padding:12px 20px;margin-top:7px;font-size:15px}
+.login-form .primary.full{min-height:42px;padding:10px 20px;margin-top:7px;font-size:15px}
 .demo-heading{margin-top:12px;padding-top:12px}
 .demo-accounts{max-height:240px}
-@media(max-width:560px){.login-form{padding:20px 18px}.login-form .primary.full{min-height:48px}}
+@media(max-width:560px){.login-form{padding:20px 18px}.login-form .primary.full{min-height:44px}}
