@@ -17,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.time.Instant;
+import java.sql.Timestamp;
 import java.util.UUID;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -29,12 +30,12 @@ public class AuthController {
   public AuthController(AppUserRepository users, PasswordEncoder encoder, JwtService jwt, JdbcTemplate jdbc, AuditService audit) { this.users = users; this.encoder = encoder; this.jwt = jwt; this.jdbc = jdbc; this.audit = audit; }
   @PostMapping("/login") public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request, jakarta.servlet.http.HttpServletRequest http) {
     String email = request.email().toLowerCase();
-    Integer recentFailures = jdbc.queryForObject("select count(*) from login_attempts where lower(email)=lower(?) and successful=false and attempted_at > ?", Integer.class, email, Instant.now().minusSeconds(900));
+    Integer recentFailures = jdbc.queryForObject("select count(*) from login_attempts where lower(email)=lower(?) and successful=false and attempted_at > ?", Integer.class, email, Timestamp.from(Instant.now().minusSeconds(900)));
     if (recentFailures != null && recentFailures >= 5) throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "Too many failed attempts. Try again in 15 minutes.");
     AppUser user = users.findByEmailIgnoreCase(email).filter(AppUser::isActive).orElse(null);
     if (user == null || !encoder.matches(request.password(), user.getPasswordHash())) { jdbc.update("insert into login_attempts(email,ip_address,successful) values (?,?,false)", email, http.getRemoteAddr()); throw unauthorized(); }
     user.setLastLoginAt(Instant.now()); users.save(user); CurrentUser current = new CurrentUser(user);
-    String refresh = jwt.refreshToken(current); jdbc.update("insert into refresh_tokens(user_id,token_hash,expires_at) values (?,?,?)", user.getId(), hash(refresh), Instant.now().plusSeconds(14 * 86400));
+    String refresh = jwt.refreshToken(current); jdbc.update("insert into refresh_tokens(user_id,token_hash,expires_at) values (?,?,?)", user.getId(), hash(refresh), Timestamp.from(Instant.now().plusSeconds(14 * 86400)));
     jdbc.update("insert into user_sessions(user_id,device_label,ip_address) values (?,?,?)", user.getId(), http.getHeader("User-Agent"), http.getRemoteAddr());
     jdbc.update("insert into login_attempts(email,ip_address,successful) values (?,?,true)", email, http.getRemoteAddr());
     audit.record(user.getId(), "AUTH", user.getId(), "LOGIN", null, "success", http.getRemoteAddr());
@@ -47,7 +48,7 @@ public class AuthController {
       Integer valid = jdbc.queryForObject("select count(*) from refresh_tokens where user_id=? and token_hash=? and revoked_at is null and expires_at>current_timestamp", Integer.class, userId, oldHash);
       if (valid == null || valid == 0) throw unauthorized();
       AppUser user = users.findById(userId).filter(AppUser::isActive).orElseThrow(this::unauthorized); jdbc.update("update refresh_tokens set revoked_at=current_timestamp where token_hash=?", oldHash);
-      CurrentUser current = new CurrentUser(user); String next = jwt.refreshToken(current); jdbc.update("insert into refresh_tokens(user_id,token_hash,expires_at) values (?,?,?)", userId, hash(next), Instant.now().plusSeconds(14 * 86400));
+      CurrentUser current = new CurrentUser(user); String next = jwt.refreshToken(current); jdbc.update("insert into refresh_tokens(user_id,token_hash,expires_at) values (?,?,?)", userId, hash(next), Timestamp.from(Instant.now().plusSeconds(14 * 86400)));
       return ResponseEntity.ok(new AuthResponse(jwt.accessToken(current), next, profile(current)));
     } catch (ResponseStatusException ex) { throw ex; }
     catch (Exception ex) { throw unauthorized(); }
