@@ -1,9 +1,7 @@
 # Sai Vandan CRM
 
 Industry-ready real estate CRM and operational ERP for Sai Vandan Complex. The platform starts with secure lead management and is structured to grow into bookings, collections, inventory, vendors, payroll, support, and financial reporting.
-
 ## Included foundation
-
 - Java 21 / Spring Boot REST API with PostgreSQL and Flyway migrations
 - JWT authentication, refresh tokens, role/permission model, password hashing and audit fields
 - Lead enquiry, assignment, qualification, follow-up and dashboard APIs
