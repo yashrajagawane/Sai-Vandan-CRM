@@ -3,9 +3,9 @@ services:
     image: postgres:16-alpine
     container_name: sai-vandan-postgres
     environment:
-      POSTGRES_DB: sai_vandan_crm
-      POSTGRES_USER: sai_vandan
-      POSTGRES_PASSWORD: sai_vandan_dev
+      POSTGRES_DB: ${POSTGRES_DB:-sai_vandan_crm}
+      POSTGRES_USER: ${POSTGRES_USER:-sai_vandan}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sai_vandan_dev}
     ports:
       - "5432:5432"
     volumes:
@@ -16,6 +16,35 @@ services:
       timeout: 5s
       retries: 10
 
+  backend:
+    build:
+      context: ./backend
+    container_name: sai-vandan-api
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: ${DB_URL:-jdbc:postgresql://postgres:5432/sai_vandan_crm}
+      DB_USERNAME: ${DB_USERNAME:-sai_vandan}
+      DB_PASSWORD: ${DB_PASSWORD:-sai_vandan_dev}
+      JWT_SECRET: ${JWT_SECRET:-change-this-production-secret-to-a-long-random-value}
+      FRONTEND_URLS: ${FRONTEND_URLS:-http://localhost:5173,http://localhost}
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: http://localhost:8080/api/v1
+    container_name: sai-vandan-web
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
 volumes:
   postgres_data:
-

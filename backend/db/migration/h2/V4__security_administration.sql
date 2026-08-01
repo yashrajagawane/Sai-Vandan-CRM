@@ -1,0 +1,29 @@
+CREATE TABLE IF NOT EXISTS permissions (
+  id UUID DEFAULT RANDOM_UUID() PRIMARY KEY, code VARCHAR(100) UNIQUE NOT NULL, name VARCHAR(150) NOT NULL, module VARCHAR(60) NOT NULL
+);
+CREATE TABLE IF NOT EXISTS role_permissions (
+  role_id UUID NOT NULL REFERENCES roles(id) ON DELETE CASCADE, permission_id UUID NOT NULL REFERENCES permissions(id) ON DELETE CASCADE,
+  PRIMARY KEY(role_id, permission_id)
+);
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+  id UUID DEFAULT RANDOM_UUID() PRIMARY KEY, user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  token_hash VARCHAR(128) UNIQUE NOT NULL, expires_at TIMESTAMP WITH TIME ZONE NOT NULL, revoked_at TIMESTAMP WITH TIME ZONE, created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS user_sessions (
+  id UUID DEFAULT RANDOM_UUID() PRIMARY KEY, user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  device_label VARCHAR(160), ip_address VARCHAR(64), last_seen_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP, revoked_at TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS audit_logs (
+  id UUID DEFAULT RANDOM_UUID() PRIMARY KEY, actor_id UUID REFERENCES users(id), entity_type VARCHAR(80) NOT NULL,
+  entity_id UUID, action VARCHAR(50) NOT NULL, before_data VARCHAR(10000), after_data VARCHAR(10000), ip_address VARCHAR(64), created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS login_attempts (
+  id UUID DEFAULT RANDOM_UUID() PRIMARY KEY, email VARCHAR(180) NOT NULL, ip_address VARCHAR(64), successful BOOLEAN NOT NULL,
+  attempted_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_entity ON audit_logs(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_login_attempts_email_time ON login_attempts(email, attempted_at);
+INSERT INTO permissions(code,name,module) VALUES
+('USER_VIEW','View users','ADMIN'),('USER_MANAGE','Manage users and roles','ADMIN'),('USER_DISABLE','Activate/deactivate users','ADMIN'),
+('AUDIT_VIEW','View audit history','ADMIN'),('AUDIT_EXPORT','Export audit history','ADMIN'),('SYSTEM_CONFIG','Manage system configuration','ADMIN');

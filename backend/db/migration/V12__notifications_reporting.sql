@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS notifications (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), recipient_user_id UUID REFERENCES users(id), role_code VARCHAR(40), event_type VARCHAR(60) NOT NULL, title VARCHAR(180) NOT NULL, message TEXT NOT NULL, severity VARCHAR(20) NOT NULL DEFAULT 'INFO', deep_link VARCHAR(240), due_at TIMESTAMPTZ, escalated_at TIMESTAMPTZ, read_at TIMESTAMPTZ, created_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE INDEX IF NOT EXISTS idx_notifications_recipient_read ON notifications(recipient_user_id,read_at,created_at);
+CREATE INDEX IF NOT EXISTS idx_notifications_role_read ON notifications(role_code,read_at,created_at);
+CREATE TABLE IF NOT EXISTS report_saved_views (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), owner_user_id UUID NOT NULL REFERENCES users(id), report_key VARCHAR(80) NOT NULL, view_name VARCHAR(120) NOT NULL, filters_json TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS report_export_audit (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), actor_id UUID REFERENCES users(id), report_key VARCHAR(80) NOT NULL, export_format VARCHAR(20) NOT NULL, row_count INT NOT NULL DEFAULT 0, created_at TIMESTAMPTZ NOT NULL DEFAULT now());
+ALTER TABLE vendor_bills ADD COLUMN IF NOT EXISTS project_id UUID REFERENCES projects(id);
+ALTER TABLE petty_cash_entries ADD COLUMN IF NOT EXISTS project_id UUID REFERENCES projects(id);
+CREATE TABLE IF NOT EXISTS notification_preferences (user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE, in_app_enabled BOOLEAN NOT NULL DEFAULT TRUE, email_enabled BOOLEAN NOT NULL DEFAULT FALSE, reminder_enabled BOOLEAN NOT NULL DEFAULT TRUE, updated_at TIMESTAMPTZ NOT NULL DEFAULT now());

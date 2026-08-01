@@ -23,12 +23,12 @@ public class SecurityConfiguration {
   @Bean PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
   @Bean SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwt) throws Exception {
     return http.csrf(csrf -> csrf.disable()).cors(cors -> {}).sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-      .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**", "/actuator/health", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+      .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**", "/portal/**", "/actuator/health", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll().anyRequest().authenticated())
       .addFilterBefore(jwt, UsernamePasswordAuthenticationFilter.class).build();
   }
   @Bean CorsConfigurationSource corsConfigurationSource(@Value("${app.cors.allowed-origins}") String allowedOrigins) {
-    CorsConfiguration configuration = new CorsConfiguration(); configuration.setAllowedOrigins(List.of(allowedOrigins.split(","))); configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")); configuration.setAllowedHeaders(List.of("Authorization", "Content-Type")); configuration.setAllowCredentials(true);
+    CorsConfiguration configuration = new CorsConfiguration(); configuration.setAllowedOrigins(List.of(allowedOrigins.split(","))); configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")); configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Portal-Token")); configuration.setAllowCredentials(true);
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource(); source.registerCorsConfiguration("/**", configuration); return source;
   }
 }

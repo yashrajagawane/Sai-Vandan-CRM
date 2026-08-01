@@ -206,18 +206,19 @@ Execute phases in order: 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10. D
 - **Phase 6 — In progress:** Employees, attendance, leave, payroll calculation, salary components, payroll locking, salary payment status, seeded HR data, and HR workspace views are connected. Automated payroll tests remain.
 - **Phase 7 — In progress:** Vendor compliance, purchase orders, approvals, vendor bills, partial payments, vendor ledger, petty-cash request/approval/payment/reversal, seeded records, and procurement workspace views are connected. Automated procurement tests remain.
 - **Phase 8 — In progress:** Support tickets, SLA/priority tracking, assignment, comments, satisfaction capture, maintenance scheduling/status, referrals, referral conversion, seeded after-sales data, support workspace views, CSV export, backend compilation, frontend build, and API smoke tests are complete. Customer portal isolation, persistent notification escalation, and automated support tests remain.
-- **Phase 9 — Pending:** Persistent role-scoped notifications, escalation rules, filterable reports, Excel/PDF exports, saved views, and export auditing.
-- **Phase 10 — Pending:** Full automated test suite, Docker deployment validation, backup/restore notes, final documentation, and responsive visual QA.
+- **Phase 9 — Core complete:** V12 notification/reporting schema, role-scoped persistent notifications, unread/read-all actions, due-date escalation, notification preferences, saved report views, report catalog/data APIs, export auditing, and CSV/Excel-compatible/PDF downloads are implemented. The notification center and Reports workspace are connected in the frontend; automated Phase 9 regression tests remain for the release gate.
+- **Phase 10 — Core in progress:** Release workflow tests, release smoke checks, Dockerfiles, full PostgreSQL/API/frontend Compose stack, production environment template, production Spring profile, README handover, troubleshooting guidance, and final frontend build verification are implemented. Docker cannot be executed in the current environment, and Maven Surefire's JUnit Platform provider is not present in the offline dependency cache, so the JUnit suite remains to be executed in a network-enabled/CI environment.
 
 ### Verified local runtime
 
 - Backend compiled successfully with Maven and is running at `http://127.0.0.1:8080/api/v1`.
 - Frontend production build completed successfully and Vite is running at `http://127.0.0.1:5173/`.
 - Phase 8 smoke test passed for dashboard, tickets, comments, ticket status, maintenance status, seeded referrals, and Finance-role access denial.
+- Phase 10 release smoke script passed for health, report catalog, notification feed, CSV/PDF exports, and report permission boundaries.
 
 ### Overall release status
 
-The application is functional for the implemented role-based modules, but it is not yet the final enterprise release. Phases 3–8 still have acceptance-gate work, while Phases 9–10 remain pending.
+The application is functional for the implemented role-based modules and has deployment-ready assets. Final enterprise release still requires CI execution of the JUnit workflow suite, Docker Compose validation, backup/restore rehearsal, and responsive visual QA.
 
 ### Historical phase notes
 

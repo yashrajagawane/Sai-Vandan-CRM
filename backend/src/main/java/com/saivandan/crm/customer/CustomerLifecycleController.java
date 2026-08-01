@@ -3,16 +3,23 @@ package com.saivandan.crm.customer;
 import com.saivandan.crm.security.AuditService;
 import com.saivandan.crm.security.CurrentUser;
 import com.saivandan.crm.user.RoleCode;
+import com.saivandan.crm.storage.FileStorageService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.server.ResponseStatusException;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -21,8 +28,8 @@ import java.util.*;
 @RestController
 @RequestMapping("/lifecycle")
 public class CustomerLifecycleController {
-  private final JdbcTemplate jdbc; private final AuditService audit;
-  public CustomerLifecycleController(JdbcTemplate jdbc, AuditService audit){this.jdbc=jdbc;this.audit=audit;}
+  private final JdbcTemplate jdbc; private final AuditService audit; private final FileStorageService storage;
+  public CustomerLifecycleController(JdbcTemplate jdbc, AuditService audit, FileStorageService storage){this.jdbc=jdbc;this.audit=audit;this.storage=storage;}
 
   @GetMapping("/bookings") @PreAuthorize("hasAnyRole('SUPER_ADMIN','SALES_MANAGER','SALES_EXECUTIVE','FINANCE','SUPPORT')")
   public List<Map<String,Object>> bookings(@AuthenticationPrincipal CurrentUser current){if(isExecutive(current))return jdbc.queryForList("select b.id,b.booking_number as bookingNumber,l.customer_name as customer,u.unit_number as unit,b.status,b.booking_amount as bookingAmount,b.payment_validated as paymentValidated from bookings b join leads l on l.id=b.lead_id join units u on u.id=b.unit_id where l.assigned_to=? order by b.created_at desc",current.user().getId()); return jdbc.queryForList("select b.id,b.booking_number as bookingNumber,l.customer_name as customer,u.unit_number as unit,b.status,b.booking_amount as bookingAmount,b.payment_validated as paymentValidated from bookings b join leads l on l.id=b.lead_id join units u on u.id=b.unit_id order by b.created_at desc");}
@@ -35,6 +42,12 @@ public class CustomerLifecycleController {
 
   @PostMapping("/bookings/{bookingId}/documents") @ResponseStatus(HttpStatus.CREATED) @PreAuthorize("hasAnyRole('SUPER_ADMIN','SALES_MANAGER','SALES_EXECUTIVE','FINANCE','SUPPORT')")
   public Map<String,Object> uploadDocument(@PathVariable UUID bookingId,@Valid @RequestBody DocumentRequest req,@AuthenticationPrincipal CurrentUser current){booking(current,bookingId); Integer version=jdbc.queryForObject("select coalesce(max(version_no),0)+1 from customer_documents where booking_id=? and document_type=?",Integer.class,bookingId,req.documentType()); UUID id=UUID.randomUUID(); jdbc.update("insert into customer_documents(id,booking_id,document_type,file_name,storage_key,version_no,verification_status,rejection_reason,masked,expiry_date,uploaded_by) values (?,?,?,?,?,?,?,?,?,?,?)",id,bookingId,req.documentType(),req.fileName(),req.storageKey(),version,"UPLOADED",null,true,req.expiryDate(),current.user().getId()); audit.record(current.user().getId(),"CUSTOMER_DOCUMENT",id,"UPLOAD",null,req.documentType(),null); return document(id);}
+
+  @PostMapping(value="/documents/{documentId}/content", consumes="multipart/form-data") @PreAuthorize("hasAnyRole('SUPER_ADMIN','SALES_MANAGER','SALES_EXECUTIVE','FINANCE','SUPPORT')")
+  public Map<String,Object> uploadContent(@PathVariable UUID documentId,@RequestPart("file") MultipartFile file,@AuthenticationPrincipal CurrentUser current){Map<String,Object> before=document(documentId);UUID bookingId=uuid(before.get("bookingId"));booking(current,bookingId);try{String key="bookings/"+bookingId+"/documents/"+documentId+"/"+Objects.requireNonNullElse(file.getOriginalFilename(),"document.bin");String stored=storage.store(key,file.getInputStream());jdbc.update("update customer_documents set storage_key=?,file_name=?,updated_at=current_timestamp where id=?",stored,file.getOriginalFilename(),documentId);audit.record(current.user().getId(),"CUSTOMER_DOCUMENT",documentId,"CONTENT_UPLOAD",before.toString(),stored,null);return document(documentId);}catch(Exception ex){throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Document storage failed.",ex);}}
+
+  @GetMapping("/documents/{documentId}/content") @PreAuthorize("hasAnyRole('SUPER_ADMIN','SALES_MANAGER','FINANCE','SUPPORT')")
+  public ResponseEntity<Resource> downloadContent(@PathVariable UUID documentId,@AuthenticationPrincipal CurrentUser current){Map<String,Object> row=document(documentId);booking(current,uuid(row.get("bookingId")));try{InputStreamResource resource=new InputStreamResource(storage.open(String.valueOf(row.get("storageKey"))));return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\""+row.get("fileName")+"\"").contentType(MediaType.APPLICATION_OCTET_STREAM).body(resource);}catch(Exception ex){throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Document content is not available.");}}
 
   @PatchMapping("/documents/{documentId}/verify") @PreAuthorize("hasAnyRole('SUPER_ADMIN','SALES_MANAGER','FINANCE','SUPPORT')")
   public Map<String,Object> verifyDocument(@PathVariable UUID documentId,@Valid @RequestBody VerificationRequest req,@AuthenticationPrincipal CurrentUser current){Map<String,Object> before=document(documentId); jdbc.update("update customer_documents set verification_status=?,rejection_reason=?,verified_by=?,updated_at=current_timestamp where id=?",req.status(),req.status().equals("REJECTED")?req.reason():null,current.user().getId(),documentId); audit.record(current.user().getId(),"CUSTOMER_DOCUMENT",documentId,"VERIFY",before.toString(),req.status(),null); return document(documentId);}
@@ -69,7 +82,7 @@ public class CustomerLifecycleController {
   private boolean isExecutive(CurrentUser u){return u.user().getRoles().stream().anyMatch(r->r.getCode()==RoleCode.SALES_EXECUTIVE);}
   private void ensureCustomer(UUID bookingId){if(singleId("select id from customers where booking_id=?",bookingId)==null){Map<String,Object> b=booking(null,bookingId);UUID id=UUID.randomUUID();String number="CUS-"+UUID.randomUUID().toString().substring(0,8).toUpperCase();jdbc.update("insert into customers(id,lead_id,booking_id,customer_number,full_name,mobile,email) select ?,l.id,?,?,l.customer_name,l.mobile,l.email from bookings b join leads l on l.id=b.lead_id where b.id=?",id,b.get("leadid")!=null?b.get("leadid"):b.get("leadId"),bookingId,number,bookingId);}}
   private Map<String,Object> customer(UUID bookingId){return jdbc.queryForMap("select id,customer_number as customerNumber,full_name as fullName,mobile,email,status from customers where booking_id=?",bookingId);}
-  private Map<String,Object> document(UUID id){return jdbc.queryForMap("select id,booking_id as bookingId,document_type as documentType,file_name as fileName,version_no as versionNo,verification_status as verificationStatus,rejection_reason as rejectionReason,masked,expiry_date as expiryDate from customer_documents where id=?",id);}
+  private Map<String,Object> document(UUID id){return jdbc.queryForMap("select id,booking_id as bookingId,document_type as documentType,file_name as fileName,storage_key as storageKey,version_no as versionNo,verification_status as verificationStatus,rejection_reason as rejectionReason,masked,expiry_date as expiryDate from customer_documents where id=?",id);}
   private Map<String,Object> loan(UUID bookingId){UUID id=singleId("select id from loan_applications where booking_id=?",bookingId);return id==null?Map.of("status","NOT_APPLIED"):jdbc.queryForMap("select id,status,bank_name as bankName,loan_amount as loanAmount,emi,sanction_date as sanctionDate,loan_officer as loanOfficer,rejection_reason as rejectionReason,disbursement_date as disbursementDate from loan_applications where id=?",id);}
   private Map<String,Object> agreement(UUID bookingId){UUID id=singleId("select id from agreements where booking_id=?",bookingId);return id==null?Map.of("status","PENDING"):jdbc.queryForMap("select id,agreement_date as agreementDate,agreement_value as agreementValue,stamp_duty as stampDuty,registration_date as registrationDate,registration_number as registrationNumber,legal_notes as legalNotes,status from agreements where id=?",id);}
   private Map<String,Object> possession(UUID bookingId){UUID id=singleId("select id from possession_cases where booking_id=?",bookingId);if(id==null)return Map.of("status","NOT_READY","items",List.of());return Map.of("case",possessionById(id),"items",jdbc.queryForList("select item_code as itemCode,item_name as itemName,completed,completed_at as completedAt,remarks from possession_checklist_items where possession_id=? order by item_code",id));}

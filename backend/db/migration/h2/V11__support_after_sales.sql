@@ -1,0 +1,11 @@
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS resolution VARCHAR(1500);
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS resolved_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS satisfaction_rating INT;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS customer_feedback VARCHAR(1000);
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS attachment_key VARCHAR(300);
+CREATE TABLE support_comments (id UUID DEFAULT RANDOM_UUID() PRIMARY KEY, ticket_id UUID NOT NULL REFERENCES support_tickets(id) ON DELETE CASCADE, comment_text VARCHAR(2000) NOT NULL, attachment_key VARCHAR(300), internal BOOLEAN NOT NULL DEFAULT FALSE, created_by UUID REFERENCES users(id), created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE maintenance_visits (id UUID DEFAULT RANDOM_UUID() PRIMARY KEY, booking_id UUID REFERENCES bookings(id), ticket_id UUID REFERENCES support_tickets(id), scheduled_date DATE NOT NULL, scheduled_time VARCHAR(30), technician VARCHAR(160), category VARCHAR(80) NOT NULL, status VARCHAR(30) NOT NULL DEFAULT 'SCHEDULED', notes VARCHAR(1000), completed_at TIMESTAMP WITH TIME ZONE, created_by UUID REFERENCES users(id));
+CREATE TABLE referrals (id UUID DEFAULT RANDOM_UUID() PRIMARY KEY, source_booking_id UUID REFERENCES bookings(id), referred_name VARCHAR(160) NOT NULL, referred_mobile VARCHAR(20) NOT NULL, referred_email VARCHAR(180), source VARCHAR(50) NOT NULL DEFAULT 'CUSTOMER_REFERRAL', lead_id UUID REFERENCES leads(id), status VARCHAR(30) NOT NULL DEFAULT 'REGISTERED', reward_amount DECIMAL(15,2) DEFAULT 0, created_by UUID REFERENCES users(id), created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP);
+CREATE INDEX idx_support_tickets_sla ON support_tickets(status,due_at);
+CREATE INDEX idx_maintenance_status_date ON maintenance_visits(status,scheduled_date);
+CREATE INDEX idx_referrals_status ON referrals(status);
