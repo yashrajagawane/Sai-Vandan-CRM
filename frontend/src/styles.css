@@ -109,3 +109,10 @@ header{height:82px;margin:0;border:0!important;border-bottom:1px solid var(--exe
 .notification i{background:var(--exec-error);box-shadow:none}
 @media(max-width:950px){header{margin:0;padding:18px 24px}.login-page{grid-template-columns:1fr}.login-panel{min-height:360px;border-bottom:0}.login-form-wrap{min-height:560px;padding:26px 24px}.login-form{width:min(470px,100%);margin:auto}}
 @media(max-width:560px){.page{padding:24px 16px 45px}header{height:auto}.login-panel{padding:30px;min-height:300px}.login-form-wrap{padding:18px 16px;min-height:560px}.login-form{padding:26px 20px;border-radius:14px}}
+/* Phase 2 inventory floor-plan controls */
+.inventory-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;padding:4px 0}
+.unit-tile{border:1px solid var(--line);border-radius:16px;padding:16px;background:rgba(255,255,255,.04);transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.unit-tile:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(15,43,35,.12);border-color:var(--gold)}
+.unit-tile.available{border-left:4px solid #2c8f66}.unit-tile.reserved{border-left:4px solid #c99638}.unit-tile.booked,.unit-tile.sold{border-left:4px solid #c7654c}.unit-tile.blocked{border-left:4px solid #8b8b86}
+.unit-tile-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.unit-tile strong{display:block;font-family:var(--serif);font-size:22px;color:var(--ink);margin-bottom:8px}.unit-tile small{display:block;color:var(--muted);margin-top:5px}.unit-actions{display:flex;gap:12px;margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+.filters select.filter{min-width:140px;background:var(--paper);color:var(--ink);cursor:pointer}

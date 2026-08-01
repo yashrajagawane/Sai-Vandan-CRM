@@ -193,6 +193,41 @@ The project is considered complete only when all PDF modules have domain tables 
 
 Execute phases in order: 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10. Do not start the next phase until the current phase's acceptance criteria are met.
 
-## Current baseline
+## Current implementation status
 
-The repository currently has the foundation and partial implementations through the early sales/inventory/finance/vendor/support surfaces. The next implementation phase should be Phase 0 followed by Phase 1, then the full sales lifecycle in Phase 3.
+### Latest verified snapshot — Phase 8
+
+- **Phase 0 — Complete:** H2 and PostgreSQL migrations, API error envelopes, correlation IDs, health probes, OpenAPI metadata, and build verification are implemented.
+- **Phase 1 — Complete:** Super Admin administration, RBAC denial responses, audit events, login throttling, refresh-token rotation/reuse rejection, session revocation, logout, and security tables are implemented and verified.
+- **Phase 2 — Complete:** Inventory projects, wings, floors, units, pricing/status history, reservation expiry, conflict protection, role-scoped reads, filters, CSV export, and floor-plan UI are implemented and smoke-tested.
+- **Phase 3 — In progress:** Sales qualification, duplicate checks, assignment history/transfer, timelines, follow-ups, site visits, negotiation approvals, quotation versions, booking payment validation, and unit conflict prevention are implemented. Richer quotation/approval/transfer actions and automated workflow tests remain.
+- **Phase 4 — In progress:** Customer records, masked documents and verification, loan milestones, agreements/registration, possession cases, readiness gates, checklists, sign-off, and seeded post-booking data are implemented and smoke-tested. Customer portal isolation, object storage, and automated tests remain.
+- **Phase 5 — In progress:** Installments, partial receipts, customer ledger/aging, reversals, bank entries, collection targets, finance reports, seeded data, and the finance workspace are connected. Automated finance workflow tests remain.
+- **Phase 6 — In progress:** Employees, attendance, leave, payroll calculation, salary components, payroll locking, salary payment status, seeded HR data, and HR workspace views are connected. Automated payroll tests remain.
+- **Phase 7 — In progress:** Vendor compliance, purchase orders, approvals, vendor bills, partial payments, vendor ledger, petty-cash request/approval/payment/reversal, seeded records, and procurement workspace views are connected. Automated procurement tests remain.
+- **Phase 8 — In progress:** Support tickets, SLA/priority tracking, assignment, comments, satisfaction capture, maintenance scheduling/status, referrals, referral conversion, seeded after-sales data, support workspace views, CSV export, backend compilation, frontend build, and API smoke tests are complete. Customer portal isolation, persistent notification escalation, and automated support tests remain.
+- **Phase 9 — Pending:** Persistent role-scoped notifications, escalation rules, filterable reports, Excel/PDF exports, saved views, and export auditing.
+- **Phase 10 — Pending:** Full automated test suite, Docker deployment validation, backup/restore notes, final documentation, and responsive visual QA.
+
+### Verified local runtime
+
+- Backend compiled successfully with Maven and is running at `http://127.0.0.1:8080/api/v1`.
+- Frontend production build completed successfully and Vite is running at `http://127.0.0.1:5173/`.
+- Phase 8 smoke test passed for dashboard, tickets, comments, ticket status, maintenance status, seeded referrals, and Finance-role access denial.
+
+### Overall release status
+
+The application is functional for the implemented role-based modules, but it is not yet the final enterprise release. Phases 3–8 still have acceptance-gate work, while Phases 9–10 remain pending.
+
+### Historical phase notes
+
+- **Phase 0 complete:** local H2 and production PostgreSQL migration tracks, API error envelope, correlation IDs, health probes, OpenAPI metadata, and build verification are in place.
+- **Phase 1 complete:** Super Admin administration APIs, role denial responses, audit events, login throttling, refresh-token rotation with reuse rejection, session revocation, logout, and security migration tables are working and verified.
+- **Phase 2 complete:** normalized inventory control tables, project master create/update APIs, wing/floor APIs, unit create/update APIs, price/status history, reservation expiry, reserve/release conflict protection, role-scoped inventory reads, filters, CSV export, and the dedicated floor-plan inventory UI are implemented and smoke-tested.
+- **Phase 3 in progress:** sales lifecycle APIs and migrations now cover qualification scoring, duplicate checks, assignment history/transfer, activity timeline, follow-ups, site visits, negotiation approvals, quotation versions, booking payment validation, and unit conflict prevention. Role-aware sales workspace screens are wired for qualification, follow-ups, site visits, negotiations, and bookings; richer quotation/approval/transfer UI actions are the remaining Phase 3D work.
+- **Phase 4 in progress:** customer records, masked document metadata and verification, loan milestones, agreement/registration tracking, possession cases, readiness gates, checklist completion, sign-off, and seeded post-booking records are implemented and smoke-tested. UI panels are wired for documents, loans, agreements, and possession; binary object storage, a separate Legal role, and a customer portal remain governed by later scope/role decisions.
+- **Phase 5 in progress:** finance tables and APIs now cover installment plans, partial receipts, customer ledger and aging, refunds/reversals, bank entries, collection targets, and finance reports. Seeded collection data and the finance workspace are connected; automated finance workflow tests remain before the phase release gate.
+- **Phase 6 in progress:** HR tables and APIs now cover attendance, holidays/leave requests, payroll calculations, salary components, payroll locking, salary payment status, and seeded HR records. The HR workspace is connected for employee, attendance, leave, payroll, and salary views; automated payroll calculation/locking tests remain before the phase release gate.
+- **Phase 7 in progress:** vendor compliance fields, purchase orders, approval status, vendor bills, partial payments, vendor ledger, and petty-cash request→approval→payment→reversal controls are implemented with seeded records. Vendor/procurement workspace views are connected; automated procurement and petty-cash tests remain before the phase release gate.
+- **Phase 8 in progress:** support ticket lifecycle, SLA/priority tracking, assignment, comments, satisfaction capture, maintenance scheduling/status, referrals, and referral conversion APIs are implemented with seeded after-sales records. Support workspace views and exports are connected; customer portal isolation, persistent notification escalation, and automated support workflow tests remain before the phase release gate.
+- **Remaining:** Phases 3–10 remain partial or pending; the current product must not be represented as a fully complete enterprise ERP until those workflows and release gates pass.

@@ -6,6 +6,9 @@ export type Page<T> = { content: T[]; totalElements: number; totalPages: number;
 export type Dashboard = { role: string; title: string; subtitle: string; metrics: { label: string; value: string; note: string; money: boolean }[]; queue: { label: string; count: number; note: string }[]; modules: string[]; features: string[] };
 export type Workspace = { module: string; title: string; role: string; rows: Record<string, string | number | null>[] };
 export type WorkspaceRecord = { id: string; module: string; title: string; status: string; details: string | null; createdAt: string; updatedAt: string };
+export type InventoryProject = { id: string; code: string; name: string; city: string | null; address: string | null; status: string };
+export type InventoryUnit = { id: string; projectId: string; projectCode: string; projectName: string; wing: string; floor: string; unitNumber: string; configuration: string; carpetArea: number; builtUpArea: number; basePrice: number; facing: string | null; parking: string | null; amenities: string | null; status: string; reservedUntil: string | null };
+export type SalesRow = Record<string, string | number | boolean | null>;
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = localStorage.getItem('sv_access_token');
@@ -22,4 +25,50 @@ export const api = {
   createLead: (lead: Record<string, unknown>) => request<Lead>('/leads', { method: 'POST', body: JSON.stringify(lead) }),
   records: (module: string) => request<WorkspaceRecord[]>(`/workspace/${module}/records`),
   createRecord: (module: string, record: { title: string; status: string; details: string }) => request<WorkspaceRecord>(`/workspace/${module}/records`, { method: 'POST', body: JSON.stringify(record) })
+  ,inventory: (filters: { projectId?: string; status?: string; wing?: string; configuration?: string } = {}) => { const query = new URLSearchParams(Object.entries(filters).filter(([, value]) => Boolean(value)) as [string,string][]); return request<InventoryUnit[]>(`/inventory${query.toString() ? `?${query.toString()}` : ''}`); }
+  ,inventoryProjects: () => request<InventoryProject[]>('/inventory/projects')
+  ,createProject: (project: Record<string, unknown>) => request<InventoryProject>('/inventory/projects', { method: 'POST', body: JSON.stringify(project) })
+  ,updateProject: (id: string, project: Record<string, unknown>) => request<InventoryProject>(`/inventory/projects/${id}`, { method: 'PUT', body: JSON.stringify(project) })
+  ,createUnit: (unit: Record<string, unknown>) => request<InventoryUnit>('/inventory/units', { method: 'POST', body: JSON.stringify(unit) })
+  ,updatePrice: (unitId: string, price: number, reason: string) => request<InventoryUnit>(`/inventory/units/${unitId}/price`, { method: 'PUT', body: JSON.stringify({ price, reason }) })
+  ,reserveUnit: (unitId: string, hours = 48) => request<InventoryUnit>(`/inventory/units/${unitId}/reserve`, { method: 'POST', body: JSON.stringify({ hours }) })
+  ,releaseUnit: (unitId: string) => request<InventoryUnit>(`/inventory/units/${unitId}/release`, { method: 'POST' })
+  ,qualification: (leadId: string) => request<SalesRow>(`/sales/leads/${leadId}/qualification`)
+  ,qualify: (leadId: string, data: Record<string, unknown>) => request<SalesRow>(`/sales/leads/${leadId}/qualification`, { method: 'PATCH', body: JSON.stringify(data) })
+  ,salesFollowUps: (overdue = false) => request<SalesRow[]>(`/sales/follow-ups?overdue=${overdue}`)
+  ,salesSiteVisits: () => request<SalesRow[]>('/sales/site-visits')
+  ,salesNegotiations: () => request<SalesRow[]>('/sales/negotiations')
+  ,salesBookings: () => request<SalesRow[]>('/sales/bookings')
+  ,createFollowUp: (leadId: string, data: Record<string, unknown>) => request<SalesRow>(`/sales/leads/${leadId}/follow-ups`, { method: 'POST', body: JSON.stringify(data) })
+  ,lifecycleBookings: () => request<SalesRow[]>('/lifecycle/bookings')
+  ,lifecycleSummary: (bookingId: string) => request<Record<string, unknown>>(`/lifecycle/bookings/${bookingId}/summary`)
+  ,uploadDocument: (bookingId: string, data: Record<string, unknown>) => request<SalesRow>(`/lifecycle/bookings/${bookingId}/documents`, { method: 'POST', body: JSON.stringify(data) })
+  ,verifyDocument: (documentId: string, status: string, reason = '') => request<SalesRow>(`/lifecycle/documents/${documentId}/verify`, { method: 'PATCH', body: JSON.stringify({ status, reason }) })
+  ,financeDashboard: () => request<Record<string, unknown>>('/finance/dashboard')
+  ,financeBookings: () => request<SalesRow[]>('/finance/bookings')
+  ,financeReceivables: () => request<SalesRow[]>('/finance/receivables')
+  ,financePayments: () => request<SalesRow[]>('/finance/payments')
+  ,financeInstallments: (bookingId: string) => request<SalesRow[]>(`/finance/bookings/${bookingId}/installments`)
+  ,createFinancePayment: (bookingId: string, data: Record<string, unknown>) => request<SalesRow>(`/finance/bookings/${bookingId}/payments`, { method: 'POST', body: JSON.stringify(data) })
+  ,reverseFinancePayment: (paymentId: string, reason: string) => request<SalesRow>(`/finance/payments/${paymentId}/reverse`, { method: 'POST', body: JSON.stringify({ reason }) })
+  ,hrDashboard: () => request<Record<string, unknown>>('/hr/dashboard')
+  ,hrEmployees: () => request<SalesRow[]>('/hr/employees')
+  ,hrAttendance: () => request<SalesRow[]>('/hr/attendance')
+  ,hrLeave: () => request<SalesRow[]>('/hr/leave')
+  ,hrPayrollRuns: () => request<SalesRow[]>('/hr/payroll-runs')
+  ,hrPayrollItems: (runId: string) => request<SalesRow[]>(`/hr/payroll-runs/${runId}/items`)
+  ,createPayrollRun: (runMonth: string) => request<SalesRow>('/hr/payroll-runs', { method: 'POST', body: JSON.stringify({ runMonth }) })
+  ,finalizePayroll: (runId: string) => request<SalesRow>(`/hr/payroll-runs/${runId}/finalize`, { method: 'POST' })
+  ,procurementDashboard: () => request<Record<string, unknown>>('/procurement/dashboard')
+  ,procurementVendors: () => request<SalesRow[]>('/procurement/vendors')
+  ,purchaseOrders: () => request<SalesRow[]>('/procurement/purchase-orders')
+  ,vendorBills: () => request<SalesRow[]>('/procurement/bills')
+  ,pettyCash: () => request<SalesRow[]>('/procurement/petty-cash')
+  ,supportDashboard: () => request<Record<string, unknown>>('/support/dashboard')
+  ,supportTickets: () => request<SalesRow[]>('/support/tickets')
+  ,supportMaintenance: () => request<SalesRow[]>('/support/maintenance')
+  ,supportReferrals: () => request<SalesRow[]>('/support/referrals')
+  ,createSupportTicket: (data: Record<string, unknown>) => request<SalesRow>('/support/tickets', { method: 'POST', body: JSON.stringify(data) })
+  ,updateSupportStatus: (id: string, data: Record<string, unknown>) => request<SalesRow>(`/support/tickets/${id}/status`, { method: 'PATCH', body: JSON.stringify(data) })
+  ,updateMaintenanceStatus: (id: string, data: Record<string, unknown>) => request<SalesRow>(`/support/maintenance/${id}/status`, { method: 'PATCH', body: JSON.stringify(data) })
 };

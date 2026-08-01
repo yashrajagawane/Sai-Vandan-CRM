@@ -23,7 +23,7 @@ public class JwtService {
   public String accessToken(CurrentUser user) { return token(user.user().getId(), user.getUsername(), "access", Instant.now().plusSeconds(accessMinutes * 60)); }
   public String refreshToken(CurrentUser user) { return token(user.user().getId(), user.getUsername(), "refresh", Instant.now().plusSeconds(refreshDays * 86400)); }
   private String token(UUID id, String subject, String type, Instant expires) {
-    return Jwts.builder().subject(subject).claim("userId", id.toString()).claim("type", type).issuedAt(new Date()).expiration(Date.from(expires)).signWith(key).compact();
+    return Jwts.builder().id(UUID.randomUUID().toString()).subject(subject).claim("userId", id.toString()).claim("type", type).issuedAt(new Date()).expiration(Date.from(expires)).signWith(key).compact();
   }
   public String subject(String token) { return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getSubject(); }
   public Claims claims(String token) { return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload(); }

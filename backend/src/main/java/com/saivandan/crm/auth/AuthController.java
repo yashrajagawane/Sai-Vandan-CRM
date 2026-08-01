@@ -49,7 +49,8 @@ public class AuthController {
       AppUser user = users.findById(userId).filter(AppUser::isActive).orElseThrow(this::unauthorized); jdbc.update("update refresh_tokens set revoked_at=current_timestamp where token_hash=?", oldHash);
       CurrentUser current = new CurrentUser(user); String next = jwt.refreshToken(current); jdbc.update("insert into refresh_tokens(user_id,token_hash,expires_at) values (?,?,?)", userId, hash(next), Instant.now().plusSeconds(14 * 86400));
       return ResponseEntity.ok(new AuthResponse(jwt.accessToken(current), next, profile(current)));
-    } catch (Exception ex) { throw unauthorized(); }
+    } catch (ResponseStatusException ex) { throw ex; }
+    catch (Exception ex) { throw unauthorized(); }
   }
   @PostMapping("/logout") public void logout(@RequestBody(required=false) RefreshRequest request, @AuthenticationPrincipal CurrentUser current, jakarta.servlet.http.HttpServletRequest http) {
     if (request != null && request.refreshToken() != null) jdbc.update("update refresh_tokens set revoked_at=current_timestamp where token_hash=?", hash(request.refreshToken()));
