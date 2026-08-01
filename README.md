@@ -1,8 +1,64 @@
+<div align="center">
+
 # Sai Vandan CRM
+
+*Enterprise real-estate CRM and operational ERP for Sai Vandan Complex — enquiry to possession, in one secure workspace.*
+
+[![Java](https://img.shields.io/badge/Java-21-437291?style=flat-square&logo=openjdk&logoColor=white)](https://openjdk.org/projects/jdk/21/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-6DB33F?style=flat-square&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![React](https://img.shields.io/badge/React-TypeScript-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+
+**[Web application](https://sai-vandan-web.onrender.com)** · **[API health](https://sai-vandan-api.onrender.com/api/v1/actuator/health)** · **[Swagger UI](https://sai-vandan-api.onrender.com/api/v1/swagger-ui.html)** · **[Screenshots](#screenshots)**
+
+</div>
 
 Sai Vandan CRM is an enterprise-ready real-estate CRM and operational ERP built for Sai Vandan Complex. It connects the complete property-sales lifecycle—from enquiry and follow-up to inventory, negotiation, booking, collections, documentation, possession, procurement, payroll, and after-sales support—in one secure workspace.
 
 The application is designed for a real Indian real-estate operating team. It includes role-specific dashboards, strict API authorization, auditable workflows, PostgreSQL migrations, realistic seed data, report exports, notifications, and deployment configuration for Docker and Render.
+
+## Table of contents
+
+- [Screenshots](#screenshots)
+- [Live deployment](#live-deployment)
+- [Product capabilities](#product-capabilities)
+- [Role workspaces](#role-workspaces)
+- [Demo accounts](#demo-accounts)
+- [Architecture](#architecture)
+- [Repository layout](#repository-layout)
+- [Local development](#local-development)
+- [Configuration](#configuration)
+- [Render deployment](#render-deployment)
+- [API overview](#api-overview)
+- [Business workflow](#business-workflow)
+- [Security and operations](#security-and-operations)
+- [Quality checks](#quality-checks)
+- [Troubleshooting](#troubleshooting)
+- [Documentation](#documentation)
+- [License and data notice](#license-and-data-notice)
+
+## Screenshots
+
+<div align="center">
+
+| Super Admin Dashboard | Sales & Lead Pipeline |
+|:---:|:---:|
+| ![Super Admin dashboard](docs/screenshots/admin-dashboard.png) | ![Sales and lead pipeline](docs/screenshots/sales-pipeline.png) |
+| Platform-wide KPIs, module access, and configuration in one view | Enquiry, assignment, follow-ups, site visits, and bookings |
+
+| Inventory & Unit Availability | Finance & Collections |
+|:---:|:---:|
+| ![Inventory and unit availability](docs/screenshots/inventory-units.png) | ![Finance and collections](docs/screenshots/finance-collections.png) |
+| Project → wing → floor → unit hierarchy with live availability | Receivables, installments, receipts, and collection reports |
+
+| HR & Payroll | Reports & Audit |
+|:---:|:---:|
+| ![HR and payroll](docs/screenshots/hr-payroll.png) | ![Reports and audit](docs/screenshots/reports-audit.png) |
+| Attendance, leave, payroll runs, and salary calculations | Role-scoped report catalog with CSV, Excel, and PDF export |
+
+</div>
+
+> Drop your own captures into `docs/screenshots/` using the filenames above (recommended: 1280×800px, PNG) and they will render automatically here. Log in with the matching [demo account](#demo-accounts) for each role to capture its dashboard.
 
 ## Live deployment
 
@@ -58,19 +114,14 @@ Never use these credentials in a real production environment. Rotate or disable 
 
 ## Architecture
 
-```text
-React + TypeScript + Vite
-        │ HTTPS / JSON REST
-        ▼
-Spring Boot 3 API (/api/v1)
-  ├─ Spring Security + JWT RBAC
-  ├─ JdbcTemplate / Spring Data repositories
-  ├─ Flyway migrations and seed data
-  ├─ Report, notification, audit and storage services
-  └─ Actuator health/readiness probes
-        │ JDBC
-        ▼
-PostgreSQL 16
+```mermaid
+flowchart TB
+    FE["React + TypeScript + Vite"]
+    API["Spring Boot 3 API (/api/v1)<br/>Spring Security + JWT RBAC<br/>JdbcTemplate / Spring Data repositories<br/>Flyway migrations and seed data<br/>Report, notification, audit and storage services<br/>Actuator health/readiness probes"]
+    DB[("PostgreSQL 16")]
+
+    FE -->|"HTTPS / JSON REST"| API
+    API -->|"JDBC"| DB
 ```
 
 ### Technology stack
@@ -97,6 +148,8 @@ frontend/
   nginx.conf                            SPA fallback and static serving
 scripts/
   release-smoke.ps1                     Dependency-light release smoke checks
+docs/
+  screenshots/                          Preview images referenced in this README
 docker-compose.yml                      PostgreSQL + API + frontend stack
 .env.example                            Local environment template
 IMPLEMENTATION_PLAN.md                  Phase plan and implementation status
@@ -304,7 +357,7 @@ Verify that the production service uses `SPRING_PROFILES_ACTIVE=prod`, the Postg
 
 ### Render reports no open port
 
-Confirm the service is a Web Service, not a Background Worker, and that the application binds to Render’s `PORT` variable. This project uses `server.port: ${PORT:8080}`.
+Confirm the service is a Web Service, not a Background Worker, and that the application binds to Render's `PORT` variable. This project uses `server.port: ${PORT:8080}`.
 
 ## Documentation
 
@@ -317,4 +370,3 @@ Confirm the service is a Web Service, not a Background Worker, and that the appl
 ## License and data notice
 
 This project is an internal business application for Sai Vandan Complex. Review licensing, privacy, retention, consent, Aadhaar/PAN handling, and local regulatory requirements before using it with real customer or employee data.
-
