@@ -116,3 +116,43 @@ header{height:82px;margin:0;border:0!important;border-bottom:1px solid var(--exe
 .unit-tile.available{border-left:4px solid #2c8f66}.unit-tile.reserved{border-left:4px solid #c99638}.unit-tile.booked,.unit-tile.sold{border-left:4px solid #c7654c}.unit-tile.blocked{border-left:4px solid #8b8b86}
 .unit-tile-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.unit-tile strong{display:block;font-family:var(--serif);font-size:22px;color:var(--ink);margin-bottom:8px}.unit-tile small{display:block;color:var(--muted);margin-top:5px}.unit-actions{display:flex;gap:12px;margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
 .filters select.filter{min-width:140px;background:var(--paper);color:var(--ink);cursor:pointer}
+
+/* Login viewport lock and wider sign-in workspace */
+html,body,#root{min-height:100%;overflow:auto}
+.shell{height:100vh;min-height:0}
+main{height:100vh;min-height:0;overflow-y:auto;overflow-x:hidden}
+.login-page{height:100dvh;min-height:0;grid-template-columns:.9fr 1.1fr;overflow:hidden}
+.login-panel{height:100%;min-height:0}
+.login-form-wrap{height:100%;min-height:0;min-width:0;padding:34px clamp(30px,5vw,82px);overflow:hidden;align-items:center}
+.login-form{width:min(540px,100%);max-height:calc(100dvh - 52px);min-height:0;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden}
+.login-form .muted{margin-bottom:18px}
+.login-form label{flex:0 0 auto}
+.demo-accounts{min-height:90px;flex:0 1 220px;max-height:220px;overflow-y:auto}
+@media(max-width:950px){
+  .login-page{grid-template-columns:1fr;grid-template-rows:minmax(220px,38dvh) minmax(0,1fr)}
+  .login-panel{height:auto;min-height:0;padding:28px 34px}
+  .login-copy{margin-top:7vh}
+  .login-form-wrap{height:auto;padding:22px 24px;overflow:hidden}
+  .login-form{max-height:calc(62dvh - 34px);width:min(560px,100%)}
+}
+@media(max-width:560px){
+  .login-page{grid-template-rows:minmax(190px,34dvh) minmax(0,1fr)}
+  .login-panel{padding:22px 24px}
+  .login-copy{margin-top:4vh}
+  .login-copy h1{font-size:34px;margin:8px 0 10px}
+  .login-copy>p:last-child{font-size:11px;line-height:1.45}
+  .login-form-wrap{padding:14px 16px}
+  .login-form{max-height:calc(66dvh - 24px);padding:24px 20px}
+}
+
+/* Login form proportions: stronger primary action, more room for demo workspaces */
+.login-form{padding:30px 34px}
+.login-form>.eyebrow{margin:0 0 4px}
+.login-form h2{margin:0 0 8px}
+.login-form .muted{margin:0 0 6px;line-height:1.5}
+.login-form label{margin:10px 0}
+.login-form input{padding:12px 14px}
+.login-form .primary.full{min-height:46px;padding:12px 20px;margin-top:7px;font-size:15px}
+.demo-heading{margin-top:12px;padding-top:12px}
+.demo-accounts{max-height:240px}
+@media(max-width:560px){.login-form{padding:20px 18px}.login-form .primary.full{min-height:48px}}
