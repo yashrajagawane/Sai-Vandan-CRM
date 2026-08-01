@@ -1,0 +1,80 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.5.6)
+
+2026-08-01T10:11:27.879+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] c.saivandan.crm.SaiVandanCrmApplication  : Starting SaiVandanCrmApplication using Java 21.0.10 with PID 17548 (C:\Users\agawa\OneDrive\Documents\Sai Vandan\backend\target\classes started by agawa in C:\Users\agawa\OneDrive\Documents\Sai Vandan\backend)
+2026-08-01T10:11:27.884+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] c.saivandan.crm.SaiVandanCrmApplication  : No active profile set, falling back to 1 default profile: "default"
+2026-08-01T10:11:28.984+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-08-01T10:11:29.089+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 94 ms. Found 4 JPA repository interfaces.
+2026-08-01T10:11:29.784+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-08-01T10:11:29.811+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-08-01T10:11:29.811+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.46]
+2026-08-01T10:11:29.878+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] o.a.c.c.C.[.[localhost].[/api/v1]        : Initializing Spring embedded WebApplicationContext
+2026-08-01T10:11:29.881+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1950 ms
+2026-08-01T10:11:30.423+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-08-01T10:11:30.696+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:sai_vandan_crm user=SAIVANDAN
+2026-08-01T10:11:30.706+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-08-01T10:11:30.768+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:h2:mem:sai_vandan_crm (H2 2.3)
+2026-08-01T10:11:30.807+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Schema history table "public"."flyway_schema_history" does not exist yet
+2026-08-01T10:11:30.819+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 2 migrations (execution time 00:00.018s)
+2026-08-01T10:11:30.830+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Creating Schema History table "public"."flyway_schema_history" ...
+2026-08-01T10:11:30.872+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": << Empty Schema >>
+2026-08-01T10:11:30.882+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "1 - initial schema"
+2026-08-01T10:11:30.920+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "2 - operational workspace"
+2026-08-01T10:11:30.945+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 2 migrations to schema "public", now at version v2 (execution time 00:00.042s)
+2026-08-01T10:11:31.101+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-08-01T10:11:31.148+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.29.Final
+2026-08-01T10:11:31.192+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-08-01T10:11:31.620+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-08-01T10:11:31.714+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 2.3.232
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-08-01T10:11:32.939+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-08-01T10:11:32.989+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-08-01T10:11:34.048+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoints beneath base path '/actuator'
+2026-08-01T10:11:34.115+05:30  WARN 17548 --- [sai-vandan-crm-api] [           main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: da1d3311-785d-4e9d-a09d-efd34649bec8
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-08-01T10:11:34.122+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-08-01T10:11:34.633+05:30  WARN 17548 --- [sai-vandan-crm-api] [           main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-08-01T10:11:34.642+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-08-01T10:11:34.649+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-08-01T10:11:34.649+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-08-01T10:11:34.665+05:30  INFO 17548 --- [sai-vandan-crm-api] [           main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-08-01T10:11:34.681+05:30 ERROR 17548 --- [sai-vandan-crm-api] [           main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:3.5.6:run (default-cli) on project sai-vandan-crm-api: Process terminated with exit code: 1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

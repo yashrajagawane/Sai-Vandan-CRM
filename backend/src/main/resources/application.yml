@@ -15,6 +15,8 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration/h2
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
 server:
   port: ${PORT:8080}
   servlet:
@@ -31,3 +33,12 @@ management:
     web:
       exposure:
         include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html

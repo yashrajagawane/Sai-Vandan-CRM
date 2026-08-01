@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
+import io.jsonwebtoken.Claims;
 
 @Service
 public class JwtService {
@@ -25,5 +26,7 @@ public class JwtService {
     return Jwts.builder().subject(subject).claim("userId", id.toString()).claim("type", type).issuedAt(new Date()).expiration(Date.from(expires)).signWith(key).compact();
   }
   public String subject(String token) { return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getSubject(); }
+  public Claims claims(String token) { return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload(); }
+  public String tokenType(String token) { return claims(token).get("type", String.class); }
+  public UUID userId(String token) { return UUID.fromString(claims(token).get("userId", String.class)); }
 }
-

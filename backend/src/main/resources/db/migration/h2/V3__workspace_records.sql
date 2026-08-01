@@ -1,0 +1,11 @@
+CREATE TABLE workspace_records (
+  id UUID DEFAULT RANDOM_UUID() PRIMARY KEY,
+  module VARCHAR(80) NOT NULL,
+  title VARCHAR(240) NOT NULL,
+  status VARCHAR(40) NOT NULL DEFAULT 'OPEN',
+  details VARCHAR(4000),
+  created_by UUID REFERENCES users(id),
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX idx_workspace_records_module ON workspace_records(module);

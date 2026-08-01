@@ -22,25 +22,15 @@ The backend defaults to `http://localhost:8080/api/v1`; the frontend starts on `
 
 ## Local demo accounts
 
-On first start, the application creates accounts for all planned roles. Every local demo account uses the password `ChangeMe!2026`:
+On first start, the application creates exactly seven role workspaces. Every local demo account uses the password `ChangeMe!2026`:
 
 - Super Admin: `admin@saivandan.local`
-- Admin: `operations.admin@saivandan.local`
-- Management: `management@saivandan.local`
 - Sales Manager: `sales.manager@saivandan.local`
 - Sales Executive: `sales.executive@saivandan.local`
-- Telecaller: `telecaller@saivandan.local`
-- Reception: `reception@saivandan.local`
-- Inventory Manager: `inventory@saivandan.local`
-- Accounts Manager: `accounts.manager@saivandan.local`
-- Accounts Executive: `accounts.executive@saivandan.local`
-- HR Manager: `hr.manager@saivandan.local`
-- HR Executive: `hr.executive@saivandan.local`
-- Procurement Manager: `procurement@saivandan.local`
-- Legal Officer: `legal@saivandan.local`
-- Support Executive: `support@saivandan.local`
-- Auditor: `auditor@saivandan.local`
-- Customer Portal: `customer@saivandan.local`
+- HR & Payroll: `hr@saivandan.local`
+- Accounts & Finance: `finance@saivandan.local`
+- Vendor Manager: `vendor@saivandan.local`
+- Customer Support: `support@saivandan.local`
 
 Change this immediately outside local development.
 

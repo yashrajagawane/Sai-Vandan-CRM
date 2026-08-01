@@ -3,8 +3,9 @@ export type User = { id: string; fullName: string; email: string; roles: string[
 export type AuthResult = { accessToken: string; refreshToken: string; user: User };
 export type Lead = { id: string; leadNumber: string; customerName: string; mobile: string; source: string; status: string; temperature: string; assignedTo: string | null; createdAt: string };
 export type Page<T> = { content: T[]; totalElements: number; totalPages: number; number: number };
-export type Dashboard = { role: string; title: string; subtitle: string; metrics: { label: string; value: string; note: string; money: boolean }[]; queue: { label: string; count: number; note: string }[]; modules: string[] };
+export type Dashboard = { role: string; title: string; subtitle: string; metrics: { label: string; value: string; note: string; money: boolean }[]; queue: { label: string; count: number; note: string }[]; modules: string[]; features: string[] };
 export type Workspace = { module: string; title: string; role: string; rows: Record<string, string | number | null>[] };
+export type WorkspaceRecord = { id: string; module: string; title: string; status: string; details: string | null; createdAt: string; updatedAt: string };
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = localStorage.getItem('sv_access_token');
@@ -18,5 +19,7 @@ export const api = {
   dashboard: () => request<Dashboard>('/dashboard'),
   workspace: (module: string) => request<Workspace>(`/workspace/${module}`),
   leads: () => request<Page<Lead>>('/leads?size=50'),
-  createLead: (lead: Record<string, unknown>) => request<Lead>('/leads', { method: 'POST', body: JSON.stringify(lead) })
+  createLead: (lead: Record<string, unknown>) => request<Lead>('/leads', { method: 'POST', body: JSON.stringify(lead) }),
+  records: (module: string) => request<WorkspaceRecord[]>(`/workspace/${module}/records`),
+  createRecord: (module: string, record: { title: string; status: string; details: string }) => request<WorkspaceRecord>(`/workspace/${module}/records`, { method: 'POST', body: JSON.stringify(record) })
 };

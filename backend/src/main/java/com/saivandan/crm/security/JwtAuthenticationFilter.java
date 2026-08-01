@@ -20,7 +20,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     String header = request.getHeader(HttpHeaders.AUTHORIZATION);
     if (header != null && header.startsWith("Bearer ")) {
       try {
-        String email = jwt.subject(header.substring(7));
+        String raw = header.substring(7);
+        if (!"access".equals(jwt.tokenType(raw))) throw new IllegalArgumentException("Not an access token");
+        String email = jwt.subject(raw);
         users.findByEmailIgnoreCase(email).filter(u -> u.isActive()).ifPresent(user -> {
           CurrentUser principal = new CurrentUser(user);
           SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities()));
@@ -30,4 +32,3 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     chain.doFilter(request, response);
   }
 }
-

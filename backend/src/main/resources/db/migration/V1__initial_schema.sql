@@ -83,11 +83,8 @@ CREATE TABLE audit_logs (
 );
 
 INSERT INTO roles(code, name, description) VALUES
-('SUPER_ADMIN','Super Admin','Complete platform administration'), ('ADMIN','Administrator','Operational administration'), ('MANAGEMENT','Management','Executive reporting and approvals'),
-('SALES_MANAGER','Sales Manager','Team pipeline management'), ('SALES_EXECUTIVE','Sales Executive','Assigned lead management'), ('TELECALLER','Telecaller','Lead capture and qualification'),
-('RECEPTION','Reception','Walk-in and visit registration'), ('INVENTORY_MANAGER','Inventory Manager','Project and unit inventory'), ('ACCOUNTS_MANAGER','Accounts Manager','Financial control'),
-('ACCOUNTS_EXECUTIVE','Accounts Executive','Financial data entry'), ('HR_MANAGER','HR Manager','HR and payroll control'), ('HR_EXECUTIVE','HR Executive','HR operations'),
-('PROCUREMENT_MANAGER','Procurement Manager','Vendors and purchase orders'), ('LEGAL_OFFICER','Legal Officer','Documents and agreements'), ('SUPPORT_EXECUTIVE','Support Executive','After-sales support'), ('AUDITOR','Auditor','Read-only audit access'), ('CUSTOMER','Customer','Customer portal');
+('SUPER_ADMIN','Super Admin','Complete platform administration'), ('SALES_MANAGER','Sales Manager','Sales team management'), ('SALES_EXECUTIVE','Sales Executive','Assigned customer lifecycle'),
+('HR','HR & Payroll','Employees and payroll'), ('FINANCE','Accounts & Finance','Receivables and finance'), ('VENDOR','Vendor Manager','Vendors and procurement'), ('SUPPORT','Customer Support','Complaints and after-sales');
 INSERT INTO permissions(code, name, module) VALUES
 ('LEAD_VIEW_ALL','View all leads','LEADS'), ('LEAD_VIEW_ASSIGNED','View assigned leads','LEADS'), ('LEAD_MANAGE','Create and edit leads','LEADS'), ('LEAD_ASSIGN','Assign leads','LEADS'),
 ('LEAD_APPROVE_DISCOUNT','Approve discounts','LEADS'), ('INVENTORY_MANAGE','Manage inventory','INVENTORY'), ('BOOKING_MANAGE','Manage bookings','BOOKINGS'),
