@@ -7,11 +7,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.security.access.AccessDeniedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.time.Instant;
 import java.util.Map;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
+  private static final Logger log = LoggerFactory.getLogger(ApiExceptionHandler.class);
   @ExceptionHandler(MethodArgumentNotValidException.class)
   ResponseEntity<?> validation(MethodArgumentNotValidException ex) {
     Map<String, String> errors = ex.getBindingResult().getFieldErrors().stream().collect(java.util.stream.Collectors.toMap(e -> e.getField(), e -> e.getDefaultMessage(), (a,b) -> a));
@@ -27,6 +30,7 @@ public class ApiExceptionHandler {
     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("timestamp", Instant.now(), "message", "You do not have permission to perform this action."));
   }
   @ExceptionHandler(Exception.class) ResponseEntity<?> unexpected(Exception ex) {
+    log.error("Unhandled API exception", ex);
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("timestamp", Instant.now(), "message", "An unexpected error occurred."));
   }
 }
