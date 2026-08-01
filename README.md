@@ -108,7 +108,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\release-smoke.
 
 - [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) — phase status and acceptance gates
 - `backend/src/main/resources/db/migration/` — PostgreSQL migrations
-- `backend/src/main/resources/db/migration/h2/` — local H2 migrations
+- `backend/src/main/resources/db/migration-h2/` — local H2 migrations
 - `backend/.env.example` and `.env.example` — environment templates
 - `docker-compose.yml` — full deployment stack
 
